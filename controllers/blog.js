@@ -15,3 +15,4 @@ const getNew = () => Blog.find().sort([['createdAT',-1]]).exec();
 module.exports={
     create,getAll,getById,editOne,deleteOne,getByTitle,getByTag,getByAuther,getNew
 }
+

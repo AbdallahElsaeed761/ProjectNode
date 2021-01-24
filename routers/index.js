@@ -5,7 +5,7 @@ const authmiddlware=require('../middlewares/auth');
 const router=express.Router();
 
 
-router.use('/blogs',authmiddlware,blog);
+router.use('/blogs',blog);
 router.use('/users',user);
 
 

@@ -23,20 +23,20 @@ const getAll=()=>User.find({}).exec();
 const editOne=(id,data)=>User.findByIdAndUpdate(id,data,{new:true}).exec();
 
 //follow function
-const follow = (id, trgetid) => User.update(
+const follow = (id, targetid) => User.update(
     { 
         "_id": id 
     },    
     {        
         $push: {
-            following: trgetid,
+            following: targetid,
         }
     }
     
 );
 //followes
-const followes = (id, trgetid) => User.update(
-    { "_id": trgetid },
+const followes = (id, targetid) => User.update(
+    { "_id": targetid },
     {
         $push: {
             followers: id,
@@ -44,17 +44,17 @@ const followes = (id, trgetid) => User.update(
     }
 );
 //unfollow function
-const unfollow = (id, trgetid) => User.update(
+const unfollow = (id, targetid) => User.update(
     { "_id": id },
     {
         $pull: {
-            following: trgetid,
+            following: targetid,
         }
     }
 );
 //unfollowes
-const unfollowes = (id, trgetid) => User.update(
-    { "_id": trgetid },
+const unfollowes = (id, targetid) => User.update(
+    { "_id": targetid },
     {
         $pull: {
             followers: id,

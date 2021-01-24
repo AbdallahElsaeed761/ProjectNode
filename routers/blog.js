@@ -1,19 +1,42 @@
 const express=require('express');
 const {create ,getAll,getById,editOne,deleteOne,getByTitle,getByAuther,getNew,getByTag}=require('../controllers/blog');
 const authMiddleware = require('../middlewares/auth');
+const multer=require('multer');
+const path=require('path');
+const storage = multer.diskStorage({
+    // destination: path.join(__dirname,"..","static","images"),
+    destination:function(req,file,cb){
+        cb(null, 'static/');
+
+    },
+    // By default, multer removes file extensions so let's add them back
+    filename: function(req, file, cb) {
+        cb(null, file.originalname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+
+
 
 const router=express.Router();
 
-router.use(authMiddleware);
-router.post('/', async (req, res, next) => {
-    const { body, user: { _id } } = req;
+// router.use(authMiddleware);
+router.post('/',authMiddleware,async (req, res, next) => {
+    console.log(req.user);
+const upload = multer({ storage: storage }).single("photo");
 
-    try {
-        const blog = await create({ ...body, auther: _id });
-        res.json(blog);
-    } catch (e) {
-        next(e);
-    }
+    upload(req,res,  function(err){
+        console.log(req.user);
+        const { body, user:{id} } = req;
+        if(req.file!=undefined)
+        body.photo= req.file.path;
+    
+        create({ ...body, auther: id }).then(blog=>res.json(blog)).catch(e=>next(e));
+        // res.json(blog);
+    
+    
+    });
+    
 });
 
 router.get('/', async(req,res,next)=>{
