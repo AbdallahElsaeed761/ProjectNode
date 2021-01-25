@@ -1,7 +1,9 @@
 const express=require('express');
 const mongoose=require('mongoose');
 const router=require('./routers');
-mongoose.connect('mongodb://localhost:27017/Project',{ useUnifiedTopology: true });
+//mongoose.connect('mongodb://localhost:27017/Project',{ useUnifiedTopology: true });
+const { MONGODB_URI } = process.env;
+mongoose.connect(MONGODB_URI,{ useUnifiedTopology: true } );
 const app=express();
 
 app.use(express.json());
