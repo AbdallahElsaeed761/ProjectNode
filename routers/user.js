@@ -1,7 +1,7 @@
 const express=require('express');
 const auth = require('../middlewares/auth');
 
-const {create,login,getAll,editOne,unfollow,unfollowes,follow,followes}=require('../controllers/user');
+const {create,login,getAll,editOne,removeAccount,unfollow,unfollowes,follow,followes}=require('../controllers/user');
 const router=express.Router();
 router.post('/',async(req,res,next)=>{
     const {body}=req;
@@ -44,6 +44,17 @@ router.patch('/:id',async(req,res,next)=>{
     }
 
 });
+//delete
+router.delete('/delete', async (req, res, next) => {
+    const { user: { id } } = req;
+    try {
+        const users = await removeAccount(id);
+        res.send(" User Deleted ");
+    } catch (e) {
+        next(e);
+    }
+});
+
 
 //follow
 router.use(auth);

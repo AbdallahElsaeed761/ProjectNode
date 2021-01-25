@@ -21,6 +21,8 @@ return {...user.toJSON(),token};
 const getAll=()=>User.find({}).exec();
 
 const editOne=(id,data)=>User.findByIdAndUpdate(id,data,{new:true}).exec();
+const removeAccount = (id) =>  User.findByIdAndDelete(id).exec();
+
 
 //follow function
 const follow = (id, targetid) => User.update(
@@ -71,5 +73,5 @@ const unfollowes = (id, targetid) => User.update(
 
 
 module.exports={
-    create,login,getAll,editOne,follow,followes,unfollow,unfollowes
+    create,login,getAll,editOne,removeAccount,follow,followes,unfollow,unfollowes
 }
