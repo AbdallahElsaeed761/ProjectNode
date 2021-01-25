@@ -1,7 +1,7 @@
 const express=require('express');
 const auth = require('../middlewares/auth');
 
-const {create,login,getAll,editOne,removeAccount,unfollow,unfollowes,follow,followes}=require('../controllers/user');
+const {create,login,getAll,editOne,getById,unfollow,unfollowes,follow,followes}=require('../controllers/user');
 const router=express.Router();
 router.post('/',async(req,res,next)=>{
     const {body}=req;
@@ -45,6 +45,16 @@ router.patch('/:id',async(req,res,next)=>{
 
 });
 
+//getById
+router.get('/:id', async (req, res, next) => {
+    const { params: { id }, body } = req;
+    try {
+        const users = await getById(id, body);
+        res.json(users);
+    } catch (e) {
+        next(e);
+    }
+});
 
 
 //follow
