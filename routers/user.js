@@ -60,6 +60,7 @@ router.post('/follow/:followid', async (req, res, next) => {
     }
 });
 //unFollowes
+router.use(auth);
 router.post('/unfollow/:followid', async (req, res, next) => {
     const { params: { followid }, user: { id } } = req;
     try {

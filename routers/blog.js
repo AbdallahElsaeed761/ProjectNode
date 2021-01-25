@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 
 const router=express.Router();
 
-// router.use(authMiddleware);
+//router.use(authMiddleware);
 router.post('/',authMiddleware,async (req, res, next) => {
     console.log(req.user);
 const upload = multer({ storage: storage }).single("photo");
@@ -48,6 +48,18 @@ router.get('/', async(req,res,next)=>{
         next(e);
     }
 
+});
+//get newly blogs
+router.get('/new', async (req, res, next) => {
+
+    try {
+        const blog = await getNew();
+        res.json(blog);
+
+    } catch (e) {
+        next(e);
+
+    }
 });
 router.get('/:id',async(req,res,next)=>{
     const {params:{id}}=req
@@ -117,18 +129,7 @@ router.get('/tags/:tags', async (req, res, next) => {
 });
 
 
-//get newly blogs
-router.get('/new', async (req, res, next) => {
 
-    try {
-        const blog = await getNew();
-        res.json(blog);
-
-    } catch (e) {
-        next(e);
-
-    }
-});
 
 
 
