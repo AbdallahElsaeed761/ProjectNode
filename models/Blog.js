@@ -21,6 +21,16 @@ const blogSchema=new Schema({
         type:Schema.Types.ObjectId,
         ref: 'User'
     },
+    username: {
+        type: String,
+        maxLength: 256,
+        //required: true
+    },
+    comments: [{
+        body: String,
+        commenter: String
+    }],
+
 
 });
 

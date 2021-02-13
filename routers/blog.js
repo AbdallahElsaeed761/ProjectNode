@@ -1,8 +1,10 @@
 const express=require('express');
-const {create ,getAll,getById,editOne,deleteOne,getByTitle,getByAuther,getNew,getByTag}=require('../controllers/blog');
+const {create ,getAll,getById,editOne,deleteOne,getByTitle,getByAuther,getNew,getByTag,gets,getmyFblog,searchBlog,pushComment}=require('../controllers/blog');
 const authMiddleware = require('../middlewares/auth');
 const multer=require('multer');
 const path=require('path');
+const { type } = require('os');
+const { types } = require('util');
 const storage = multer.diskStorage({
     // destination: path.join(__dirname,"..","static","images"),
     destination:function(req,file,cb){
@@ -61,6 +63,29 @@ router.get('/new', async (req, res, next) => {
 
     }
 });
+router.get('/myblogs',authMiddleware, async (req, res, next) => {
+    const { user: { _id } } = req;
+    
+    try {
+
+        const blog = await gets(_id);
+        res.json(blog);
+    } catch (e) {
+        next(e);
+    }
+});
+router.get('/home',authMiddleware, async (req, res, next) => {
+    const { user: { following } } = req;
+    console.log(following)
+    try {
+        const blogs = await getmyFblog(following);
+        res.json(blogs);
+        console.log("inner try"+blogs)
+    } catch (e) {
+        next(e);
+    }
+});
+
 router.get('/:id',async(req,res,next)=>{
     const {params:{id}}=req
     try{
@@ -72,23 +97,54 @@ router.get('/:id',async(req,res,next)=>{
         }
     
 });
-router.patch('/:id',async(req,res,next)=>{
-    const {params:{id},body}=req;
-    try{
-        const blog=await editOne(id,body);
-        res.json(blog);
-        }
-        catch(e){
-            next(e);
-        }
+router.patch('/addComment',authMiddleware, async (req, res, next) => {
+    const { body:{id, Comment},user:{username} } = req;
+    Comment.commenter = username;
+    try {
+        const user = await pushComment({ id, Comment});
+        res.json(user);
+    } catch (e) {
+        console.log(e)
+        next(e);
+    }
+});
+// router.patch('/:id',async(req,res,next)=>{
+//     const {params:{id},body}=req;
+//     try{
+//         const blog=await editOne(id,body);
+//         res.json(blog);
+//         }
+//         catch(e){
+//             next(e);
+//         }
+    
+// });
+
+router.patch('/:id',authMiddleware,async (req, res, next) => {
+    
+    
+const upload = multer({ storage: storage }).single("photo");
+
+    upload(req,res,  function(err){
+        console.log(req.user);
+        const { params:{id},body} = req;
+        if(req.file!=undefined)
+        body.photo= req.file.path;
+    
+        editOne(id,body).then(blog=>res.json(blog)).catch(e=>next(e));
+        // res.json(blog);
+    
+    
+    });
     
 });
+
 router.delete('/:id',async(req,res,next)=>{
     const {params:{id}}=req;
     try{
         const blog=await deleteOne(id);
        // res.json(blog);
-        res.send('object is deleted');
+        res.json({Msg:'object is deleted'});
     }catch(e){
         next(e)
     }
@@ -107,10 +163,19 @@ router.get('/title/:title', async (req, res, next) => {
 });
 
 //get by auther
-router.get('/auther/:auther', async (req, res, next) => {
-    const { params: { auther } } = req;
+// router.get('/auther/:auther', async (req, res, next) => {
+//     const { params: { auther } } = req;
+//     try {
+//         const blogs = await getByAuther({ auther });
+//         res.json(blogs);
+//     } catch (e) {
+//         next(e);
+//     }
+// });
+router.get('/auther/:id', async (req, res, next) => {
+    const { params: { id } } = req;
     try {
-        const blogs = await getByAuther({ auther });
+        const blogs = await getByAuther({ id });
         res.json(blogs);
     } catch (e) {
         next(e);
@@ -130,14 +195,15 @@ router.get('/tags/:tags', async (req, res, next) => {
 
 
 
-
-
-
-
-
-
-
-
+router.get('/search/:searched', async (req, res, next)=>{
+    const { params: { searched } } = req;
+    try {
+        const results = await searchBlog(searched);
+        res.json(results);
+    } catch (e) {
+        next(e);
+    }
+});
 
 
 
