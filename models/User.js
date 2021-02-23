@@ -35,12 +35,12 @@ const userSchema=new Schema({
 
     
     following: [{ 
-        type:String,
-       // ref: 'User' 
+        type:Schema.Types.ObjectId,
+        ref: 'User' 
     }],
     followers: [{ 
-        type:String,
-       // ref: 'User'
+        type:Schema.Types.ObjectId,
+        ref: 'User'
     }],
     Blog:{
     type:  Schema.Types.ObjectId,

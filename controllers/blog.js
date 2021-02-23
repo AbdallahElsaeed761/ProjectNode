@@ -6,7 +6,7 @@ return Blog.create(blog)
 
 }
 const getAll=(query)=>Blog.find({query}).exec();
-const getById=(id)=>Blog.findById(id).exec();
+const getId=(id)=>Blog.findById(id).exec();
 const editOne=(id,body)=>Blog.findByIdAndUpdate(id,body,{new:true}).exec();
 const deleteOne=(id)=>Blog.findByIdAndRemove(id).exec();
 const getByTitle = ({title}) => Blog.find({title}).exec();
@@ -61,6 +61,6 @@ const pushComment = ({ id, Comment }) => Blog.findByIdAndUpdate(
 
 
 module.exports={
-    create,getAll,getById,editOne,deleteOne,getByTitle,getByTag,getByAuther,getNew,gets,getmyFblog,searchBlog,pushComment
+    create,getAll,getId,editOne,deleteOne,getByTitle,getByTag,getByAuther,getNew,gets,getmyFblog,searchBlog,pushComment
 }
 

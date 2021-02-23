@@ -1,7 +1,10 @@
 const express=require('express');
-const {create ,getAll,getById,editOne,deleteOne,getByTitle,getByAuther,getNew,getByTag,gets,getmyFblog,searchBlog,pushComment}=require('../controllers/blog');
+const {create ,getAll,getId,editOne,deleteOne,getByTitle,getByAuther,getNew,getByTag,gets,getmyFblog,searchBlog,pushComment}=require('../controllers/blog');
 const authMiddleware = require('../middlewares/auth');
 const multer=require('multer');
+const Blog=require('../models/Blog');
+const User=require('../models/User');
+const {getById}=require('../controllers/user');
 const path=require('path');
 const { type } = require('os');
 const { types } = require('util');
@@ -74,6 +77,7 @@ router.get('/myblogs',authMiddleware, async (req, res, next) => {
         next(e);
     }
 });
+/*
 router.get('/home',authMiddleware, async (req, res, next) => {
     const { user: { following } } = req;
     console.log(following)
@@ -85,11 +89,42 @@ router.get('/home',authMiddleware, async (req, res, next) => {
         next(e);
     }
 });
-
+*/
+router.get('/home',authMiddleware,async(req,res,next)=>{
+    
+    userId = req.user.id;          // populate
+   // const posts= await userController.getUserPosts(result._id);
+   try{
+     
+    const {following} =   await  User.findById(userId);
+    console.log(following);
+    const Blogs =await Blog.find({auther:{$in:following}}).populate('auther');
+    res.json({Blogs});
+   }
+  catch(e){
+    next(e)
+  }
+})
+router.get('/get/:id',authMiddleware,async(req , res ,next)=>{
+    const {id}=req.params;
+       try{
+           const found    = await User.findById(id);
+           if(found){
+           const result = await getById(id);
+           const Blogs= await gets(id);
+           res.json({result,Blogs})
+           }
+           return res.json({'msg':'id is invalid'})
+         }
+          catch(e){
+          next(e);
+          } 
+    });
+    
 router.get('/:id',async(req,res,next)=>{
     const {params:{id}}=req
     try{
-        const blog=await getById(id);
+        const blog=await getId(id);
         res.json(blog);
         }
         catch(e){
@@ -97,6 +132,7 @@ router.get('/:id',async(req,res,next)=>{
         }
     
 });
+
 router.patch('/addComment',authMiddleware, async (req, res, next) => {
     const { body:{id, Comment},user:{username} } = req;
     Comment.commenter = username;

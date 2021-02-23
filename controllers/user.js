@@ -27,7 +27,7 @@ const editOne=(id,data)=>{
 
 
 // const getById= (id) => User.findById(id).exec();
-const getById= (username) => User.find({username:username}).exec();
+const getById= (username) => User.findById(username).exec();
 
 const searchUser = async(searched) => {
     const users = await User.find({ username: new RegExp(searched, 'i') }).exec();
